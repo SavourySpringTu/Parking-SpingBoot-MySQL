@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Built-By: Tu
+Build-Jdk: 20
+Implementation-Title: Parking
+Implementation-Version: 0.0.1-SNAPSHOT
+Implementation-Vendor-Id: com.buixuantu
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-boot
+ -starter-parent/Parking
+Created-By: Maven Integration for Eclipse
+
