@@ -44,12 +44,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerEntity login(String user, String passowrd) {
+    public CustomerEntity login(String user, String password) {
         for(CustomerEntity cs : customerRepository.findAll()){
-            if(user.equals(cs.getEmail())==true && passowrd.equals(cs.getPassword())==true){
+            if(user.equals(cs.getEmail())==true && password.equals(cs.getPassword())==true){
                 return cs;
             }
         }
+        System.out.println("null ne");
         return null;
     }
 

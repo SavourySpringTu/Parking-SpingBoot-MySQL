@@ -18,9 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.buixuantu.parking.Service.EmployeeService;
 import com.buixuantu.parking.Service.TicketService;
 import com.buixuantu.parking.entity.EmployeeEntity;
-import com.buixuantu.parking.middlerware.MiddlewareLogin;
-import com.buixuantu.parking.middlerware.RoleMiddleware;
-import com.buixuantu.parking.middlerware.UserMiddleware;
+
+import com.buixuantu.parking.ServiceImpl.MiddlewareLogin;
+import com.buixuantu.parking.ServiceImpl.RoleMiddleware;
+import com.buixuantu.parking.ServiceImpl.UserMiddleware;
 
 @Controller
 @RequestMapping("/parking")
@@ -42,11 +43,13 @@ import com.buixuantu.parking.middlerware.UserMiddleware;
 	@RequestMapping(value="home",params="btnLogin",method=RequestMethod.POST)
 	public String btnLogin(ModelMap model, HttpSession session, @RequestParam("uname") String name, @RequestParam("psw") String password)
 	{
-		System.out.println(name);
-		System.out.println(password);
-		
-		if(employeeService.login(name,password).getId().equals(name)==true && employeeService.login(name,password).getPassword().equals(password)==true && employeeService.login(name,password).getRole().getName().equals("Admin")==true) {
-			EmployeeEntity emp = employeeService.findEmployeeById(name);
+		MiddlewareLogin middlewareLogin = new UserMiddleware();
+		middlewareLogin.setNextChain(new RoleMiddleware());
+		if(middlewareLogin.check(name,password,employeeService)==null){
+			return "login";
+		}
+		EmployeeEntity emp = employeeService.findEmployeeById(name);
+		if(middlewareLogin.check(name,password,employeeService).equals("Admin")==true){
 			model.addAttribute("id_employee",emp.getId());
 			session.setAttribute("id_employee", emp.getId());
 			Sort sort = Sort.by("id");
@@ -56,9 +59,8 @@ import com.buixuantu.parking.middlerware.UserMiddleware;
 			model.addAttribute("p",0);
 			return "admin";
 		}
-		else if(employeeService.login(name,password) != null) {
+		else{
 			System.out.println("zo day");
-			EmployeeEntity emp = employeeService.findEmployeeById(name);
 			Sort sort = Sort.by("id");
 			Pageable pageable = PageRequest.of(0, 5,sort);
 			model.addAttribute("id_employee",emp.getId());
@@ -69,9 +71,6 @@ import com.buixuantu.parking.middlerware.UserMiddleware;
 			model.addAttribute("tickets",page);
 			model.addAttribute("p",0);
 			return "home";
-		}
-		else{
-			return "login";
 		}
 	}
 }

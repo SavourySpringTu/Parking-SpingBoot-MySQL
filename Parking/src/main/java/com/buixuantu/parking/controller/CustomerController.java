@@ -1,6 +1,7 @@
 package com.buixuantu.parking.controller;
 
 import com.buixuantu.parking.Service.CustomerService;
+import com.buixuantu.parking.Service.TicketService;
 import com.buixuantu.parking.entity.CustomerEntity;
 import com.buixuantu.parking.entity.TicketEntity;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +25,8 @@ import java.util.Optional;
 public class CustomerController {
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private TicketService ticketService;
 
     @GetMapping("/customer")
     public String customer(ModelMap model,@RequestParam("p") Optional<Integer> p){
@@ -57,10 +60,15 @@ public class CustomerController {
         }
     }
     @PostMapping(value = "customer",params = "btn_delete_customer")
-    public String updateCustomer(ModelMap model,@RequestParam("ip_email")String email,@RequestParam("p") Optional<Integer> p) {
+    public String deleteCustomer(ModelMap model,@RequestParam("ip_email")String email,@RequestParam("p") Optional<Integer> p) {
         if(customerService.findCustomerByEmail(email)==null){
             page(model,p);
             model.addAttribute("mess","EROR");
+            return "customer";
+        }
+        else if(ticketService.checkDeleteCustomer(email)!=null){
+            page(model,p);
+            model.addAttribute("mess","Can't Delete");
             return "customer";
         }
         else{

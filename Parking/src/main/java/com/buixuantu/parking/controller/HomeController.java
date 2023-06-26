@@ -46,11 +46,11 @@ public class HomeController {
 	}
 	
 	@PostMapping(value="home",params="btn_confirm_ticket")
-	public String addTicket(HttpServletRequest request,ModelMap model, @RequestParam("ip_id") String id,@RequestParam("ip_price") int price,@RequestParam("ip_type") boolean type,@RequestParam("ip_number") int number,@RequestParam("ip_position") String position) {
+	public String addTicket(HttpServletRequest request,ModelMap model, @RequestParam("ip_id") String id,@RequestParam("ip_price") int price,@RequestParam("ip_type") boolean type,@RequestParam("ip_number") int number,@RequestParam("ip_position") String position,@RequestParam("p") Optional<Integer> p) {
 		HttpSession session = request.getSession();
 		System.out.println("zo day");
 		if(ticketService.findTicketById(id) != null || positionService.findPositionById(position)==null || ticketService.checkTicket(number)==false || positionService.checkPosition(position)==false) {
-			model.addAttribute("tickets",ticketService.getTicket());
+			page(model,p);
 			model.addAttribute("id_employee",(String )session.getAttribute("id_employee"));
 			model.addAttribute("mes","Eror");
 			return "home";
@@ -58,58 +58,53 @@ public class HomeController {
 		else{
 			ticketService.addTicket(id,(String )session.getAttribute("id_employee"),price,type,position,number);
 			revenueService.updateRevenueDay();
-			model.addAttribute("tickets",ticketService.getTicket());
+			page(model,p);
 			model.addAttribute("id_employee",(String )session.getAttribute("id_employee"));
 			return "home";
 		}
 	}
 	
 	@PostMapping(value="home",params="btn_update_ticket")
-	public String updateTicket(HttpServletRequest request,ModelMap model, @RequestParam("ip_id") String id,@RequestParam("ip_price") int price,@RequestParam("ip_type") boolean type,@RequestParam("ip_number") int number,@RequestParam("ip_position") String position) {
+	public String updateTicket(HttpServletRequest request,ModelMap model, @RequestParam("ip_id") String id,@RequestParam("ip_price") int price,@RequestParam("ip_type") boolean type,@RequestParam("ip_number") int number,@RequestParam("ip_position") String position,@RequestParam("p") Optional<Integer> p) {
 		LocalDate d =LocalDate.now();
 		if(ticketService.findTicketById(id)==null){
-			ListAndId(request, model);
+			page(model,p);
 			model.addAttribute("mes","Ticket Not Found");
 			return "home";
 		}
 		else if(ticketService.findTicketById(id).isStatus()==true) {
-			ListAndId(request, model);
+			page(model,p);
 			model.addAttribute("mes","Ticket has been Export");
 			return "home";
 		}
 		else if(ticketService.findTicketById(id).getPrice()!=price && ticketService.findTicketById(id).getRevenue().getId().equals(d)==false){
-			ListAndId(request, model);
+			page(model,p);
 			model.addAttribute("mes","Cannot Update Price");
 			return "home";
 		}
 		else{
 			ticketService.updateTicket(id, number,price, type,position);
 			revenueService.updateRevenueDay();
-			ListAndId(request, model);
+			page(model,p);
 			return "home";
 		}
 	}
 	
 	@PostMapping(value="home",params="btn_export_ticket")
-	public String exportTicket(HttpServletRequest request,ModelMap model, @RequestParam("ip_id") String id) {
+	public String exportTicket(HttpServletRequest request,ModelMap model, @RequestParam("ip_id") String id,@RequestParam("p") Optional<Integer> p) {
 		if(ticketService.findTicketById(id) == null) {
-			ListAndId(request, model);
+			page(model,p);
 			model.addAttribute("mes","Id Not Found");
 			return "home";
 		}
 		else if(ticketService.findTicketById(id).isStatus()==true) {
-			ListAndId(request, model);
+			page(model,p);
 			model.addAttribute("mes","Ticket has been Export");
 			return "home";
 		}
 		ticketService.exportTicket(id);
-		ListAndId(request, model);
+		page(model,p);
 		return "home";
-	}
-	public void ListAndId(HttpServletRequest request,ModelMap model) {
-		HttpSession session = request.getSession();
-		model.addAttribute("tickets",ticketService.getTicket());
-		model.addAttribute("id_employee",(String )session.getAttribute("id_employee"));
 	}
 
 	// ======================== SEARCH ===========================

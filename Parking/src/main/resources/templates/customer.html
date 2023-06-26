@@ -120,7 +120,7 @@
         #mes {
             position: absolute ;
             color: red;
-            bottom: 5px;
+            bottom: 50px;
             font-size: 20px;
             transform: translate(-50%);
             left: 50%;
@@ -187,7 +187,7 @@
 <form class ="form_input" action="customer" method="post">
     <div  class ="input1" >
         <label>Email</label><br>
-        <input type="text" name="ip_email" required><br><br>
+        <input type="text" name="ip_email" ><br><br>
         <label>Name</label><br>
         <input type="text" name="ip_name" ><br><br>
         <label>Password</label><br>
@@ -224,6 +224,6 @@
         <li><a th:href="@{'customer?p='+${p+1}}">Next</a></li>
     </ul>
 </nav>
-<a id ="mes" th:text="${mes}">abc</a>
+<a id ="mes" th:text="${mes}"><H2>ABC</H2></a>
 </body>
 </html>

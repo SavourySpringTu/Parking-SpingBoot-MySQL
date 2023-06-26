@@ -18,4 +18,5 @@ public interface TicketService {
 	Page<TicketEntity> findAllPage(Pageable pageable);
 	List<TicketEntity> listTicketofCustomer(String id);
 	void customerConectTicket(String id,String email);
+	TicketEntity checkDeleteCustomer(String email);
 }

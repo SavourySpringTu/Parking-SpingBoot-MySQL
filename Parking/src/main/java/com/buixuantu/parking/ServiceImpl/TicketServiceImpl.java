@@ -120,10 +120,13 @@ public class TicketServiceImpl implements TicketService{
 	public List<TicketEntity> listTicketofCustomer(String id) {
 		List<TicketEntity> list = new ArrayList<>();
 		for(TicketEntity tc:ticketRepository.findAll()){
-			if(id.equals(tc.getCustomer().getEmail())==true){
-				list.add(tc);
+			if(tc.getCustomer()!=null){
+				if(tc.getCustomer().getEmail().equals(id)==true){
+					list.add(tc);
+				}
 			}
 		}
+		System.out.println("xong ne");
 		return list;
 	}
 
@@ -138,6 +141,18 @@ public class TicketServiceImpl implements TicketService{
 				return;
 			}
 		}
+	}
+
+	@Override
+	public TicketEntity checkDeleteCustomer(String email) {
+		for(TicketEntity tc:ticketRepository.findAll()){
+			if(tc.getCustomer()!=null){
+				if(tc.getCustomer().getEmail().equals(email)==true){
+					return tc;
+				}
+			}
+		}
+		return null;
 	}
 
 }
